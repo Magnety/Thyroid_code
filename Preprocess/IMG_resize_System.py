@@ -21,7 +21,7 @@ class UI(Frame):
         self.default_output_dir = None
         self.img_name = None
         self.img_names = None
-        self.img_index = 300
+        self.img_index = 0
         self.x_scale = 0
         self.y_scale = 0
         self.x_spacing = 0
@@ -88,9 +88,14 @@ class UI(Frame):
         # save mouse drag start position
         self.start_x = event.x
         self.start_y = event.y
+
         # create rectangle if not yet exist
-        # if not self.rect:
+        if self.rect1:
+            self.nii_img.delete(self.rect1)
+
         self.rect1 = self.nii_img.create_rectangle(self.x, self.y, 1, 1, fill="",outline='red')
+
+
         print("x:%d"%self.start_x)
         print("y:%d"%self.start_y)
     def on_move_press(self, event):
@@ -106,9 +111,9 @@ class UI(Frame):
 
     # 打开图像
     def loadfile(self):
-        self.default_dir = r"G:\Thoyroid\ThyroidProject\Data\FinallLabeledJpg"
-        self.img_dir = self.default_dir + '/image/2d/'
-        self.label_dir = self.default_dir + '/label_sort/2d/'
+        self.default_dir = r"G:\Thoyroid\ThyroidProject\Data\FinallLabeledJpg\0530"
+        self.img_dir = self.default_dir + '/image/zaoying/'
+        self.label_dir = self.default_dir + '/label_sort/zaoying/'
         self.img_names = os.listdir( self.img_dir)
 
         self.patient_name.set(self.img_names[self.img_index])
@@ -133,7 +138,7 @@ class UI(Frame):
         self.img_np = cv2.cvtColor(self.img_np, cv2.COLOR_BGR2RGB)
         self.label_np = cv2.imread(self.label_path)
         # self.label_np = cv2.cvtColor(self.label_np, cv2.COLOR_BGR2RGB)
-        self.show_img()
+        self.show_img_second()
     def Before(self):
         self.img_index -= 1
         self.patient_name.set(self.img_names[self.img_index])
@@ -145,7 +150,7 @@ class UI(Frame):
         self.img_np = cv2.cvtColor(self.img_np, cv2.COLOR_BGR2RGB)
         self.label_np = cv2.imread(self.label_path)
         # self.label_np = cv2.cvtColor(self.label_np, cv2.COLOR_BGR2RGB)
-        self.show_img()
+        self.show_img_second()
 
     def openfile(self):
         self.default_dir = r"G:\Thoyroid\ThyroidProject\Data\FinallLabeledJpg"
@@ -166,9 +171,9 @@ class UI(Frame):
         #self.label_np = cv2.cvtColor(self.label_np, cv2.COLOR_BGR2RGB)
         self.show_img()
     def Crop(self):
-        self.default_output_dir = "G:/Thoyroid/ThyroidProject/Data/finallcroplabeledjpg"
-        self.output_img_path =self.default_output_dir+'/image/2d'
-        self.output_label_path = self.default_output_dir+'/label_sort/2d'
+        self.default_output_dir = "G:/Thoyroid/ThyroidProject/Data/finallcroplabeledjpg/0530"
+        self.output_img_path =self.default_output_dir+'/image/zaoying'
+        self.output_label_path = self.default_output_dir+'/label_sort/zaoying'
         if not os.path.isdir(self.output_img_path):
             os.makedirs(self.output_img_path)
         if not os.path.isdir(self.output_label_path):
@@ -194,6 +199,15 @@ class UI(Frame):
         render = ImageTk.PhotoImage(img)
         self.nii_img.image = render
         self.nii_img.create_image(0, 0, anchor=NW, image=render)
+    def show_img_second(self):
+        self.nii_img.delete(tk.ALL)
+        img = Image.fromarray(self.img_np[ :, :])
+        render = ImageTk.PhotoImage(img)
+        self.nii_img.image = render
+        self.nii_img.create_image(0, 0, anchor=NW, image=render)
+        self.rect1 = self.nii_img.create_rectangle(self.x, self.y, 1, 1, fill="", outline='red')
+        self.nii_img.coords(self.rect1, self.start_x, self.start_y, self.end_x, self.end_y)
+
 
     #
 
